@@ -1,5 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import '../widgets/auth/auth_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -7,66 +10,51 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _auth = FirebaseAuth.instance;
+  void _submitAuthForm(
+      String email,
+      String password,
+      String username,
+      bool isLogin,
+      BuildContext ctx
+      ) async  {
+    UserCredential authResult;
+
+    try {
+      if (isLogin) {
+        authResult = await _auth.signInWithEmailAndPassword(
+            email: email,
+            password: password
+        );
+      } else {
+        authResult = await _auth.createUserWithEmailAndPassword(
+            email: email,
+            password: password
+        );
+      }
+    } on PlatformException catch(e) {
+      String? message = 'An error occured, please check your credentials!';
+      if(e.message != null) {
+        message = e.message;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(message!),
+          backgroundColor: Theme.of(context).errorColor,
+      )
+      );
+    } catch(e) {
+      print(e);
+    }
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: Center(
-        child: Card(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Form(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      validator: (value) {
-                        if(value!.isEmpty || !value.contains('@')) {
-                          return 'Please enter a valid email address';
-                        }
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email address'
-                      ),
-                    ),
-                    TextFormField(
-                      // validator: (value) {
-                      //   if(value.isEmpty || )
-                      // }
-                      decoration: InputDecoration(
-                        labelText: 'Username'
-                      )
-                    ),
-                    TextFormField(
-                      validator: (value) {
-                        if(value!.isEmpty || value.length < 7) {
-                          return 'Password must be at least 7 characters long.';
-                        }
-                      },
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Password'
-                      )
-                    ),
-                    SizedBox(height: 12),
-                    ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Log in')
-                    ),
-
-                    TextButton(
-                      onPressed: () {},
-                      child: Text('Create new account'),
-                    )
-                  ],
-                )
-              )
-            )
-          )
-        )
-      )
+      body: AuthForm(submitForm: _submitAuthForm),
     );
   }
 }

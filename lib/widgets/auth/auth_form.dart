@@ -1,0 +1,126 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class AuthForm extends StatefulWidget {
+
+  AuthForm({required this.submitForm});
+
+  final void Function(
+      String email,
+      String password,
+      String username,
+      bool isLogin,
+      BuildContext context
+  ) submitForm;
+  @override
+  _AuthFormState createState() => _AuthFormState();
+}
+
+class _AuthFormState extends State<AuthForm> {
+
+
+
+  final _formKey = GlobalKey<FormState>();
+  var _userEmail = '';
+  var _userName = '';
+  var _userPassword = '';
+  var isLogin = true;
+
+  void _trySubmit() {
+    final isValid = _formKey.currentState?.validate();
+    FocusScope.of(context).unfocus();
+
+    if(isValid!) {
+      _formKey.currentState?.save();
+      widget.submitForm(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
+        isLogin,
+        context,
+      );
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        body: Center(
+            child: Card(
+                child: SingleChildScrollView(
+                    child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextFormField(
+                                  key: ValueKey('email'),
+                                  validator: (value) {
+                                    if(value!.isEmpty || !value.contains('@')) {
+                                      return 'Please enter a valid email address';
+                                    }
+                                  },
+                                  onSaved: (value) {
+                                    _userEmail = value!;
+                                  },
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                      labelText: 'Email address'
+                                  ),
+                                ),
+                                if(isLogin)
+                                  TextFormField(
+                                      key: ValueKey('username'),
+                                      validator: (value) {
+                                        if(value!.isEmpty || value.length < 4) {
+                                          return 'Please enter at least 4 characters';
+                                        }
+                                      },
+                                      onSaved: (value) {
+                                        _userName = value!;
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Username'
+                                      )
+                                  ),
+                                TextFormField(
+                                    key: ValueKey('password'),
+                                    validator: (value) {
+                                      if(value!.isEmpty || value.length < 7) {
+                                        return 'Password must be at least 7 characters long.';
+                                      }
+                                    },
+                                    onSaved: (value) {
+                                      _userPassword = value!;
+                                    },
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                        labelText: 'Password'
+                                    )
+                                ),
+                                SizedBox(height: 12),
+                                ElevatedButton(
+                                    onPressed: _trySubmit,
+                                    child: Text(isLogin ? 'Sign up' : 'Log in')
+                                ),
+
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      isLogin = !isLogin;
+                                    });
+                                  },
+                                  child: Text(isLogin ? 'I have already an account' : 'Create new account'),
+                                )
+                              ],
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    );
+  }
+}
