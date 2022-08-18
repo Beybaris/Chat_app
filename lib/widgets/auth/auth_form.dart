@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../pickers/user_image_picker.dart';
+
 class AuthForm extends StatefulWidget {
 
   AuthForm({required this.submitForm});
@@ -55,6 +57,7 @@ class _AuthFormState extends State<AuthForm> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                isLogin ? UserImagePicker() : const SizedBox.shrink(),
                                 TextFormField(
                                   key: ValueKey('email'),
                                   validator: (value) {
