@@ -1,3 +1,5 @@
+import 'package:chat_app/widgets/chat/messages.dart';
+import 'package:chat_app/widgets/chat/new_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,29 +46,17 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder(
-        stream: _firestore.collection('chats/Ar6IoFwJG0FXoWqjt4OR/messages').snapshots(),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final documents = snapshot.data?.docs;
-          return ListView.builder(
-            itemCount: documents?.length ,
-            itemBuilder: (context, index) => Container(
-                child: Text(documents![0]['text']),
-            ) ,
-
-          );
-        },
-
+      body: Container(
+        child: Column(
+          children: [
+            Expanded(
+                child: Message()
+            ),
+            NewMessage(),
+          ]
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
-      ),
+
     );
   }
 }
