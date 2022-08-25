@@ -31,6 +31,7 @@ class Message extends StatelessWidget {
                         message: chatDocs![index]['text'],
                         isMe: chatDocs[index]['userId'] == snapshot.data?.docs[0].get('userId'),
                         username: chatDocs[index]['username'],
+                        userImage: chatDocs[index]['userImage'],
                       );
                     }
                 );
