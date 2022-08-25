@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:chat_app/screens/chat_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
+  Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    debugPrint("Firebase Messaging firebase is initialized");
+    await Firebase.initializeApp();
+  }
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
