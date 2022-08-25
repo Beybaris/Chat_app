@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import '../widgets/auth/auth_form.dart';
@@ -15,6 +16,7 @@ class _AuthScreenState extends State<AuthScreen> {
       String email,
       String password,
       String username,
+      File? image,
       bool isLogin,
       BuildContext ctx
       ) async  {
@@ -30,7 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
         authResult = await _auth.createUserWithEmailAndPassword(
             email: email,
             password: password
-
         );
 
         FirebaseFirestore.instance
